@@ -1,6 +1,7 @@
 from pyswip import Prolog
+from django.core.files import File
 
-prolog=Prolog()
+#prolog=Prolog()
 
 
 def grabar(hecho):
@@ -41,7 +42,8 @@ def div(palabra):
 
 
 # horario es un str, al igual que platillosFavoritos. 
-def nuevoRestaurante(nombre, tipo, ubicacion, telefono, horario,platillosFavoritos):
+def nuevoRestaurante(nombre,tipo,ubicacion,telefono,horario,platillosFavoritos):
+    print "Entro a nuevo restaurante"
     nombre=CambiarEspacios(nombre)
     tipo=CambiarEspacios(tipo)
     ubicacion=CambiarEspacios(ubicacion)
@@ -49,8 +51,12 @@ def nuevoRestaurante(nombre, tipo, ubicacion, telefono, horario,platillosFavorit
     horario=CambiarEspacios(horario)
     platillosFavoritos=CambiarEspacios(platillosFavoritos)
     pred1="restaurante("+nombre.lower()+","+tipo.lower()+","+ubicacion.lower()+","+telefono+","+horario.lower()+","+platillosFavoritos.lower()+")"
+    print pred1
+    print "Antes de assertz"
     prolog.assertz(pred1)
+    print "Despues de assertz"
     grabar(pred1)
+    print "Despues de grabar"
 
 
 def CambiarEspacios(palabra):
@@ -180,8 +186,12 @@ def RestDeIng(restaurante,ingrediente):
                 cont+=1
         return restaurantes
 
+#leertxt()
+
 def main():
+    print "Antes de BaseConocimientos"
     archi=open('BaseConocimientos.txt','a')
     archi.close()
+    print "Despues de BaseConocimientos"
     return leertxt()
          

@@ -9,5 +9,7 @@ urlpatterns = patterns('',
     url(r'^consultar', 'prototipo.views.consultar', name='consultar'),
     url(r'^platillo', 'prototipo.views.platillo', name='platillo'),
     url(r'^respuesta', 'prototipo.views.respuesta', name='respuesta'),
+    url(r'^thanks', 'prototipo.views.felicidades', name='felicidades'),
+    url(r'^consultaRestaurantes', 'prototipo.views.consultaRestaurantes', name='consultaRestaurantes'),
     url(r'^admin/', include(admin.site.urls)),
 )
