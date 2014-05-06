@@ -78,7 +78,8 @@ def consultaPlatilloRest(restaurante):
             print (each)
         print("-------------------------")
 
-def RestIng(restaurante,ingrediente):
+# Consulta de platillos por restaurante que contengan un ingrediente especifico
+def RestIng(restaurante,ingrediente): 
     for e in prolog.query("platillo("+restaurante.lower()+",Nombre,Tipo,Pais,Receta)"):
         ingredientes=e["Receta"]
         cont=0
