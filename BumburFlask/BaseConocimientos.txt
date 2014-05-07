@@ -1,0 +1,2 @@
+restaurante(a,b,c,d,e)
+platillo(sa,dsa,fdsx,cv,fe)

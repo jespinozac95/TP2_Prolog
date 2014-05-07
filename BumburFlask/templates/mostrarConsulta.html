@@ -1,3 +1,4 @@
+{% block content %}
 <!DOCTYPE html>
 <html class="no-js">
     <head>
@@ -16,9 +17,10 @@
 
         <div class="header-container">
             <header class="wrapper clearfix">
-                <center> <h1 class="title">¡Bienvenido Bumbur!</h1> </center>
+                <center> <h1 class="title">Resultados</h1> </center>
                 <nav>
                     <ul>
+						<li><a href="{{url_for('home')}}">Home</a></li>
                         <li><a href="{{url_for('mantenimiento')}}">Mantenimiento</a></li>
                         <li><a href="{{url_for('consultar')}}">Consultar</a></li>
                     </ul>
@@ -26,29 +28,18 @@
             </header>
         </div>
 
-        <div class="main-container">
+		<ul>
+		{% for n in restaurante %}
+			<li>{{n}}</li>
+		{% endfor %}
+		</ul>
+
+        <!-- <div class="main-container">
             <div class="main wrapper clearfix">
-
-                <article>
-                    <header>
-                        <center> <h1>Selecciona la opción que deseas</h1>
-							<form action="{{url_for('mantenimiento')}}">
-								<input type="submit" value="Mantenimiento de Datos">
-							</form>
-							<form action="{{url_for('consultar')}}">
-								<input type="submit" value="Consultar">
-							</form>
-						</center>
-                    </header>
-                </article>
-
-                <aside>
-                    <h3>Tu Foto</h3>
 			<img src="{{ url_for('static', filename='bumbur.jpg') }}" width="250"/> 
-                </aside>
 
-            </div> <!-- #main -->
-        </div> <!-- #main-container -->
+            </div>
+        </div> -->
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="{{ url_for('static', filename='jquery-1.11.0.min.js') }}"><\/script>')</script>
@@ -56,3 +47,4 @@
         <script src="{{ url_for('static', filename='main.js') }}"></script>
     </body>
 </html>
+{% endblock %}

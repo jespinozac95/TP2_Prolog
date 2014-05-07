@@ -7,10 +7,10 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="stylesheet" href="static/css/normalize.min.css">
-        <link rel="stylesheet" href="static/css/main.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='normalize.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
 
-        <script src="static/js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+        <script src="{{ url_for('static', filename='modernizr-2.6.2-respond-1.1.0.min.js') }}"></script>
     </head>
     <body>
 
@@ -19,9 +19,9 @@
                 <center> <h1 class="title">¡Agregado con exito!</h1> </center>
                 <nav>
                     <ul>
-			<li><a href="/">Home</a></li>
-                        <li><a href="/mantenimiento">Mantenimiento</a></li>
-                        <li><a href="/consultar">Consultar</a></li>
+						<li><a href="{{url_for('home')}}">Home</a></li>
+                        <li><a href="{{url_for('mantenimiento')}}">Mantenimiento</a></li>
+                        <li><a href="{{url_for('consultar')}}">Consultar</a></li>
                     </ul>
                 </nav>
             </header>
@@ -29,15 +29,14 @@
 
         <div class="main-container">
             <div class="main wrapper clearfix">
+			<img src="{{ url_for('static', filename='bumbur.jpg') }}" width="250"/> 
 
-			<img src="static/img/bumbur.jpg" width="250"/> 
-
-            </div> <!-- #main -->
-        </div> <!-- #main-container -->
+            </div>
+        </div>
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="static/js/vendor/jquery-1.11.0.min.js"><\/script>')</script>
+        <script>window.jQuery || document.write('<script src="{{ url_for('static', filename='jquery-1.11.0.min.js') }}"><\/script>')</script>
 
-        <script src="static/js/main.js"></script>
+        <script src="{{ url_for('static', filename='main.js') }}"></script>
     </body>
 </html>

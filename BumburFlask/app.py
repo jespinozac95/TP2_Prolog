@@ -14,52 +14,78 @@ def home():
 	return render_template('home.html', name='home')
 
 @app.route('/consultar')
-def Insertar():
+def consultar():
     return render_template('consultar.html')
 
 @app.route('/mantenimiento')
-def Ingresa_Restaurante():
+def mantenimiento():
     return render_template('mantenimiento.html')
     
+@app.route('/platillo')
+def platillo():
+    return render_template('platillo.html')
+    
+@app.route('/newRestaurante', methods=['POST'])
+def newRestaurante():
+    Nombre = request.form['nombre']
+    TipoDeComida = request.form['tipoDeComida']
+    Ubicacion = request.form['ubicacion']
+    Telefono = request.form['telefono']
+    Horario = request.form['horario']
+    nuevoRestaurante(Nombre,TipoDeComida,Ubicacion,Telefono,Horario)
+    return render_template('felicidades.html')
+    
+@app.route('/newPlatillo', methods=['POST'])
+def newPlatillo():
+    Restaurante = request.form['restaurante']
+    Nombre = request.form['nombre']
+    Tipo = request.form['tipo']
+    Pais = request.form['pais']
+    Receta = request.form['receta']
+    nuevaComida(Restaurante,Nombre,Tipo,Pais,Receta)
+    return render_template('felicidades.html')    
+    
+@app.route('/consultarTodosRestaurantes')
+def consultarTodosRestaurantes():
+	lista = consultaRestaurantes()
+	print "La lista es: "+lista
+	return render_template('mostrarConsulta.html',lista = lista)
+	
 #----------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------			BACKEND				-----------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------------------
 
-def nuevoRestaurante(nombre,tipo,ubicacion,telefono,horario,platillosFavoritos):
-    print "Entro a nuevo restaurante"
-    #p = Prolog()
+def nuevoRestaurante(nombre,tipo,ubicacion,telefono,horario):
     nombre=CambiarEspacios(nombre)
     tipo=CambiarEspacios(tipo)
     ubicacion=CambiarEspacios(ubicacion)
     telefono=CambiarEspacios(telefono)
     horario=CambiarEspacios(horario)
-    platillosFavoritos=CambiarEspacios(platillosFavoritos)
-    pred1="restaurante("+nombre.lower()+","+tipo.lower()+","+ubicacion.lower()+","+telefono+","+horario.lower()+","+platillosFavoritos.lower()+")"
-    print pred1
-    #print "Antes de assertz"
-    #prolog.assertz("restaurante(ea,aeaea,cvcvc,dfdttt,dghg,hhnnnn)")
-    #print "Despues del primer assertz"
+    pred1="restaurante("+nombre.lower()+","+tipo.lower()+","+ubicacion.lower()+","+telefono+","+horario.lower()+")"
     prolog.assertz(pred1)
-    #print "Despues del segundo assertz"
     grabar(pred1)
-    #print "Despues de grabar"
 
+def nuevaComida(restaurante, nombre, tipo, pais, receta):
+    restaurante=CambiarEspacios(restaurante)
+    nombre=CambiarEspacios(nombre)
+    tipo=CambiarEspacios(tipo)
+    pais=CambiarEspacios(pais)
+    receta=CambiarEspacios(receta)
+    pred="platillo("+restaurante.lower()+","+nombre.lower()+","+tipo.lower()+","+pais.lower()+","+receta+")"
+    prolog.assertz(pred)
+    grabar(pred)
+    
 def alterar(lista):
     for elemento in lista:
         if isinstance(elemento, list):
             alterar(elemento)
         else:
             if not isinstance(elemento,int):
-##                print("este es el elemento "+elemento)
-##                if isinstance(elemento,str):
-##                    print ("es str")
-##                else:
-##                    print ("no")
                 elemento=elemento.replace("_"," ")                
-                print("Con cambios este es el elemento "+elemento)
-                print(lista)
+                #print("Con cambios este es el elemento "+elemento)
+                #print(lista)
             
     return lista
 
@@ -72,30 +98,17 @@ def CambiarEspacios2(palabra):
     palabra=palabra.replace("xyz",",")
     return palabra
 
-
-def nuevaComida(restaurante, nombre, tipo, pais, receta):
-    restaurante=CambiarEspacios(restaurante)
-    nombre=CambiarEspacios(nombre)
-    tipo=CambiarEspacios(tipo)
-    pais=CambiarEspacios(pais)
-    receta=CambiarEspacios(receta)
-    
-    pred="platillo("+restaurante.lower()+","+nombre.lower()+","+tipo.lower()+","+pais.lower()+","+receta+")"
-    prolog.assertz(pred)
-    grabar(pred)
-
 def consultaNombre(nombre):
     nombre=CambiarEspacios(nombre)
     while True:  
         restaurantes=[]
-        for e in prolog.query("restaurante("+nombre.lower()+",Tipo,Ubicacion,Telefono,Horario,PlatFav)"):
+        for e in prolog.query("restaurante("+nombre.lower()+",Tipo,Ubicacion,Telefono,Horario)"):
             rest=[]
             rest.append(nombre)
             rest.append(e["Tipo"])
             rest.append(e["Ubicacion"])
             rest.append(e["Telefono"])
             rest.append(e["Horario"])
-            rest.append(e["PlatFav"])
             rest.append(e['Tipo'])
             restaurantes.append(rest)
             restaurantes=alterar(restaurantes)
@@ -105,15 +118,8 @@ def consultaNombre(nombre):
 def consultaRestaurantes():
     while True:
         restaurantes=[]
-        for e in prolog.query("restaurante(Nombre,Tipo,Ubicacion,Telefono,Horario,PlatFav)"):
-            rest=[]
-            rest.append(e["Nombre"])
-            rest.append(e["Tipo"])
-            rest.append(e["Ubicacion"])
-            rest.append(e["Telefono"])
-            rest.append(e["Horario"])
-            rest.append(e["PlatFav"])
-            restaurantes.append(rest)
+        for e in prolog.query("restaurante(Nombre,Tipo,Ubicacion,Telefono,Horario)"):
+            restaurantes.append(e["Nombre"])
         print restaurantes
         return restaurantes
 
@@ -122,14 +128,13 @@ def consultaTipo(tipo):
     tipo=CambiarEspacios(tipo)
     while True:
         restaurantes=[]
-        for e in prolog.query("restaurante(Nombre,"+tipo.lower()+",Ubicacion,Telefono,Horario,PlatFav)"):
+        for e in prolog.query("restaurante(Nombre,"+tipo.lower()+",Ubicacion,Telefono,Horario)"):
             rest=[]
             rest.append(e["Nombre"])
             rest.append(tipo)
             rest.append(e["Ubicacion"])
             rest.append(e["Telefono"])
             rest.append(e["Horario"])
-            rest.append(e["PlatFav"])
             restaurantes.append(rest)
         return restaurantes
         
@@ -191,18 +196,13 @@ def RestDeIng(restaurante,ingrediente):
         return restaurantes
         
 def leertxt():
-    print "Entrar a leertxt()"
     archi=open('BaseConocimientos.txt','r+')
-    print "despues de open BaseConocimientos.txt"
     linea=archi.readline()
-    prolog.assertz("restaurante(d,t,r,y,u,y)")
-    prolog.assertz("restaurante(u,y,i,y,urrr,y)")
-    print "ASSERTZ DONE"
-    print(linea)
+    #print(linea)
     while linea!="":
         prolog.assertz(linea)
         linea=archi.readline()
-        print(linea)
+        #print(linea)
     archi.close()
 
 def CambiarEspacios(palabra):
@@ -210,6 +210,9 @@ def CambiarEspacios(palabra):
     palabra=palabra.replace(",","xyz")
     return palabra
     
+#por si no esta creado todavia el archivo    
+archi=open('BaseConocimientos.txt','a+') 
+archi.close()
 leertxt()
 
 def grabar(hecho):
@@ -225,5 +228,5 @@ def grabar(hecho):
 
 
 if __name__ == '__main__':
-	app.debug = True
+	#app.debug = True
 	app.run(host='192.168.0.6')

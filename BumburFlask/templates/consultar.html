@@ -19,7 +19,7 @@
                 <center> <h1 class="title">Consultar</h1> </center>
                 <nav>
                     <ul>
-                        <li><a href="{{url_for('/')}}">Home</a></li>
+                        <li><a href="{{url_for('home')}}">Home</a></li>
                         <li><a href="{{url_for('mantenimiento')}}">Mantenimiento</a></li>
                     </ul>
                 </nav>
@@ -32,27 +32,27 @@
                     <section>
                         <div class="content style4 featured">
 				<div class="container small">
-					<form action="/consultar"> 
+					<form action="{{url_for('consultarTodosRestaurantes')}}"> 
 					    <input type="submit" value="Mostrar todos los restaurantes">
 					</form>
 
-					<form action="/consultar">
+					<form action="{{url_for('consultar')}}">
 					    <input type="submit" value="Mostrar restaurantes por tipo de comida">
 					</form>
 
-					<form action="/consultar">
+					<form action="{{url_for('consultar')}}">
 					    <input type="submit" value="Mostrar restaurantes por nombre">
 					</form>
 
-					<form action="/consultar">
+					<form action="{{url_for('consultar')}}">
 					    <input type="submit" value="Mostrar restaurantes por platillos de algun pais">
 					</form>
 
-					<form action="/consultar">
+					<form action="{{url_for('consultar')}}">
 					    <input type="submit" value="Mostrar platillos por restaurante">
 					</form>
 
-					<form action="/consultar">
+					<form action="{{url_for('consultar')}}">
 					    <input type="submit" value="Mostrar platillos por restaurante y con un ingrediente en particular">
 					</form>
 				</div>
