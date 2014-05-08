@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='normalize.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+
+        <script src="{{ url_for('static', filename='modernizr-2.6.2-respond-1.1.0.min.js') }}"></script>
+    </head>
+    <body>
+
+        <div class="header-container">
+            <header class="wrapper clearfix">
+                <center> <h1 class="title">Mantenimiento de Datos</h1> </center>
+                <nav>
+                    <ul>
+                        <li><a href="{{url_for('home')}}">Home</a></li>
+                        <li><a href="{{url_for('consultar')}}">Consultar</a></li>
+                    </ul>
+                </nav>
+            </header>
+        </div>
+
+        <div class="main-container">
+            <div class="main wrapper clearfix">
+                <article>
+					<header>
+                        <center> 
+							<h1>Nuevo Restaurante</h1>
+						</center>
+                    </header>
+                    
+                    <section>
+                        <div class="content style4 featured">
+				<div class="container small">
+
+					<form method="post" action="{{ url_for('newRestaurante') }}">
+					 <p><label> Nombre del restaurante: </label> <input type="text" name="nombre" required> </p>
+					 <p><label> Tipo de comida: </label> <input type="text" name="tipoDeComida" required></p>
+					 <p><label> Ubicacion: </label> <input type="text" name="ubicacion" required></p>
+					 <p><label> Telefono: </label> <input type="text" name="telefono" required></p>
+					 <p><label> Horario: </label> <input type="text" name="horario" required></p>
+					 <p><button type="submit">Agregar</button></p>
+					</form>
+
+					<form action="{{ url_for('platillo') }}">
+					    <center> <input type="submit" value="Agregar Platillos"> </center>
+					</form>
+
+					</div>
+				</div>
+                    </section>
+                </article>
+
+                <aside>
+			<img src="{{ url_for('static', filename='sandwich.jpg') }}" width="250" /> 
+                </aside>
+
+            </div>
+        </div> 
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="{{ url_for('static', filename='jquery-1.11.0.min.js') }}"><\/script>')</script>
+
+        <script src="{{ url_for('static', filename='main.js') }}"></script>
+    </body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='normalize.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+
+        <script src="{{ url_for('static', filename='modernizr-2.6.2-respond-1.1.0.min.js') }}"></script>
+    </head>
+    <body>
+
+        <div class="header-container">
+            <header class="wrapper clearfix">
+                <center> <h1 class="title">¡Bienvenido Bumbur!</h1> </center>
+                <nav>
+                    <ul>
+                        <li><a href="/mantenimiento">Mantenimiento</a></li>
+                        <li><a href="/consultar">Consultar</a></li>
+                    </ul>
+                </nav>
+            </header>
+        </div>
+
+        <div class="main-container">
+            <div class="main wrapper clearfix">
+
+                <article>
+                    <header>
+                        <center> <h1>Selecciona la opción que deseas</h1>
+                        <form action="url_for('templates', filename='mantenimiento.html')">
+			    <input type="submit" value="Mantenimiento de Datos">
+			</form>
+
+			<form action="{{ url_for('consultar') }}">
+			    <input type="submit" value="Consultar">
+			</form>
+			</center>
+                    </header>
+                </article>
+
+                <aside>
+                    <h3>Tu Foto</h3>
+			<img src="{{ url_for('static', filename='bumbur.jpg') }}" width="250"/> 
+                </aside>
+
+            </div> <!-- #main -->
+        </div> <!-- #main-container -->
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="{{ url_for('static', filename='jquery-1.11.0.min.js') }}"><\/script>')</script>
+
+        <script src="{{ url_for('static', filename='main.js') }}"></script>
+    </body>
+</html>

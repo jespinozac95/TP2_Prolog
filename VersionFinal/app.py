@@ -1,0 +1,318 @@
+'''________________________________________________________________________
+					
+					Instituto Tecnológico de Costa Rica
+					     Lenguajes de Programación	
+					     Segunda Tarea Programada 
+					     App Web en Python-Prolog
+					
+					Realizado por: 
+					        * Josué Espinoza Castro 
+							* Mauricio Gamboa Cubero
+							* Andrés Pacheco Quesada
+
+					Mayo del 2014
+__________________________________________________________________________'''
+
+#Imports del framework para la aplicacion web: Flask
+from flask import Flask
+from flask import request, redirect, url_for, abort, session
+from flask import render_template
+
+#Imports del modulo integrador Python-Prolog: Pyswip
+from pyswip import Prolog
+from pyswip import *
+
+#Nombre de la aplicacion: Bumbur
+app = Flask("Bumbur")
+
+#----------------------------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------			FRONTEND	   ------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------------
+
+#-----------------------------------------------Home y Mantenimiento-----------------------------------------------
+
+#URL y funcion para home
+@app.route('/')
+def home():
+	return render_template('home.html', name='home')
+
+#URL y funcion para la pagina de consultar
+@app.route('/consultar')
+def consultar():
+	return render_template('consultar.html')
+
+#URL y funcion para la pagina de ingresar datos
+@app.route('/mantenimiento')
+def mantenimiento():
+    return render_template('mantenimiento.html')
+   
+#URL y funcion para la pagina de ingresar platillos 
+@app.route('/platillo')
+def platillo():
+    return render_template('platillo.html')
+
+#URL y funcion para la pagina de ingresar un nuevo restaurante 
+@app.route('/newRestaurante', methods=['POST'])
+def newRestaurante():
+    Nombre = request.form['nombre']
+    TipoDeComida = request.form['tipoDeComida']
+    Ubicacion = request.form['ubicacion']
+    Telefono = request.form['telefono']
+    Horario = request.form['horario']
+    nuevoRestaurante(Nombre,TipoDeComida,Ubicacion,Telefono,Horario)
+    return render_template('felicidades.html')
+
+#URL y funcion para la pagina de ingresar un nuevo platillo 
+@app.route('/newPlatillo', methods=['POST'])
+def newPlatillo():
+    Restaurante = request.form['restaurante']
+    Nombre = request.form['nombre']
+    Tipo = request.form['tipo']
+    Pais = request.form['pais']
+    Receta = request.form['receta']
+    nuevaComida(Restaurante,Nombre,Tipo,Pais,Receta)
+    return render_template('felicidades.html')    
+
+#-----------------------------------------------CONSULTAS-----------------------------------------------
+
+#URL y funcion para la pagina de consultar todos los restaurantes
+@app.route('/consultarTodosRestaurantes')
+def consultarTodosRestaurantes():
+	lista = consultaRestaurantes()
+	if lista == []:
+		lista.append("No se encontro restaurantes.")
+	return render_template('mostrarConsulta.html',lista=lista)
+
+#URL y funcion para la pagina de pedirle al usuario un nombre del restaurante
+@app.route('/nombreAConsultar')
+def nombreAConsultar():
+    return render_template('nombreAConsultar.html')
+
+#URL y funcion para la pagina de consultar restaurantes por nombre       
+@app.route('/consultarRestaurantesPorNombre', methods=['POST'])
+def consultarRestaurantesPorNombre():
+	nombre = request.form['nombreRest']
+	lista = consultaNombre(nombre)
+	if lista == []:
+		lista.append("No se encontro restaurantes con ese nombre.")
+	return render_template('mostrarConsulta.html',lista=lista)
+
+#URL y funcion para la pagina de pedirle al usuario un nombre del restaurante		
+@app.route('/tipoAConsultar')
+def tipoAConsultar():
+    return render_template('tipoAConsultar.html')
+
+#URL y funcion para la pagina de consultar todos los restaurantes segun un tipo de comida
+@app.route('/consultarRestaurantesPorTipo', methods=['POST'])
+def consultarRestaurantesPorTipo():
+	tipo = request.form['tipo']
+	lista = consultaTipo(tipo)
+	if lista == []:
+		lista.append("No se encontro restaurantes con ese tipo de comida.")
+	return render_template('mostrarConsulta.html',lista=lista)
+	
+#URL y funcion para la pagina de pedirle al usuario un nombre del restaurante	
+@app.route('/paisAConsultar')
+def paisAConsultar():
+    return render_template('paisAConsultar.html')
+
+#URL y funcion para la pagina de consultar todos los restaurantes con comidas de un pais    	
+@app.route('/consultarRestaurantesPorPais', methods=['POST'])
+def consultarRestaurantesPorPais():
+	pais = request.form['pais']
+	lista = consultaPlatilloPais(pais)
+	if len(lista) == 1:
+		lista.append("No se encontro restaurantes con platillos de ese pais.")
+	return render_template('mostrarConsulta.html',lista=lista)
+	
+#URL y funcion para la pagina de pedirle al usuario un nombre del restaurante		
+@app.route('/restauranteAConsultar')
+def restauranteAConsultar():
+    return render_template('restauranteAConsultar.html')
+
+#URL y funcion para la pagina de consultar todos los platillos de un restaurante   
+@app.route('/consultarPlatillosPorRestaurante', methods=['POST'])
+def consultarPlatillosPorRestaurante():
+	restaurante = request.form['restaurante']
+	lista = consultaPlatillosDeRestaurante(restaurante)
+	if len(lista) == 1:
+		lista.append("No se encontro platillos para ese restaurante.")
+	return render_template('mostrarConsulta.html',lista=lista)
+
+#URL y funcion para la pagina de pedirle al usuario un nombre del restaurante	
+@app.route('/restEIngredienteAConsultar')
+def restEIngredienteAConsultar():
+    return render_template('restEIngredienteAConsultar.html')
+
+#URL y funcion para la pagina de consultar todos los platillos de un restaurante con tal ingrediente   
+@app.route('/consultarPlatillosPorRestEIng', methods=['POST'])
+def consultarPlatillosPorRestEIng():
+	restaurante = request.form['restaurante']
+	ingrediente = request.form['ingrediente']
+	lista = RestDeIng(restaurante,ingrediente)
+	if lista == []:
+		lista.append("No se encontro platillos de ese restaurante con ese ingrediente.")
+	return render_template('mostrarConsulta.html',lista=lista)
+
+#----------------------------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------			BACKEND		   --------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------------
+
+#SIMULADOR DE PROLOG
+prolog = Prolog()
+
+#Funcion que inserta un nuevo restaurante en la base de conocimientos (Prolog y .txt)
+def nuevoRestaurante(nombre,tipo,ubicacion,telefono,horario):
+    nombre=CambiarEspacios(nombre)
+    tipo=CambiarEspacios(tipo)
+    ubicacion=CambiarEspacios(ubicacion)
+    telefono=CambiarEspacios(telefono)
+    horario=CambiarEspacios(horario)
+    pred="restaurante("+nombre.lower()+","+tipo.lower()+","+ubicacion.lower()+","+telefono+","+horario.lower()+")"
+    prolog.assertz(pred)
+    grabar(pred)
+
+#Funcion que inserta un nuevo platillo en la base de conocimientos (Prolog y .txt)
+def nuevaComida(restaurante,nombre,tipo,pais,receta):
+    restaurante=CambiarEspacios(restaurante)
+    nombre=CambiarEspacios(nombre)
+    tipo=CambiarEspacios(tipo)
+    pais=CambiarEspacios(pais)
+    receta=CambiarEspacios(receta)
+    pred="platillo("+restaurante.lower()+","+nombre.lower()+","+tipo.lower()+","+pais.lower()+","+receta.lower()+")"
+    prolog.assertz(pred)
+    grabar(pred)
+
+#Funcion que cambia los espacios por underscores, ya que prolog no acepta espacios    
+def alterar(lista):
+    for elemento in lista:
+        if isinstance(elemento, list):
+            alterar(elemento)
+        else:
+            if not isinstance(elemento,int):
+                elemento=elemento.replace("_"," ")
+    return lista
+
+#Funcion que divide una palabra por "xyz" y devuelve una lista (Se usa para separar los ingredientes de un platillo)
+def div(palabra):
+    palabra=palabra.split("xyz")
+    return palabra
+
+#Funcion que consulta a prolog por los restaurantes que tengan cierto nombre
+def consultaNombre(nombre):
+	nombre=CambiarEspacios(nombre)
+	restaurantes=[]
+	try:
+		for e in prolog.query("restaurante("+nombre.lower()+",Tipo,Ubicacion,Telefono,Horario)"):
+			restaurantes.append("Restaurante: "+nombre.lower()+", Tipo: "+e["Tipo"]+", Ubicacion: "+e["Ubicacion"]+", Telefono: "+e["Telefono"]+", Horario: "+e["Horario"])
+			restaurantes=alterar(restaurantes)
+		return restaurantes
+	except:
+		return restaurantes
+
+#Funcion que consulta a prolog por los restaurantes que tengan cierto tipo de comida
+def consultaTipo(tipo):
+	tipo=CambiarEspacios(tipo)
+	restaurantes=[]
+	try:
+		for e in prolog.query("restaurante(Nombre,"+tipo.lower()+",Ubicacion,Telefono,Horario)"):
+			restaurantes.append("Restaurante: "+e["Nombre"])
+			restaurantes=alterar(restaurantes)
+		return restaurantes
+	except:
+		return restaurantes
+
+#Funcion que consulta a prolog por todos los restaurantes       
+def consultaRestaurantes():
+	restaurantes=[]
+	try:
+		for e in prolog.query("restaurante(Nombre,Tipo,Ubicacion,Telefono,Horario)"):
+			restaurantes.append("Restaurante: "+e["Nombre"])
+		return restaurantes
+	except:
+		return restaurantes
+
+#Funcion que consulta a prolog por los restaurantes con platillos de cierto pais        
+def consultaPlatilloPais(pais):
+	pais=CambiarEspacios(pais)
+	restaurantes=[]
+	restaurantes.append("NOTA: La busqueda se hizo sobre los platillos, no sobre los restaurantes.")
+	try:
+		for e in prolog.query("platillo(Restaurante,Nombre,Tipo,"+pais.lower()+",Receta)"):
+			restaurantes.append("Restaurante: "+e["Restaurante"])
+		return restaurantes
+	except:
+		return restaurantes
+
+#Funcion que consulta a prolog por los platillos de cierto restaurante
+def consultaPlatillosDeRestaurante(restaurante):
+	restaurante=CambiarEspacios(restaurante)
+	restaurantes=[]
+	restaurantes.append("NOTA: La busqueda se hizo sobre los platillos, no sobre los restaurantes.")
+	try:
+		for e in prolog.query("platillo("+restaurante.lower()+",Nombre,Tipo,Pais,Receta)"):
+			restaurantes.append("Platillo: "+e["Nombre"])
+		return restaurantes
+	except:
+		return restaurantes
+		
+#Funcion que consulta a prolog por los platillos de cierto restaurante que tengan cierto ingrediente
+def RestDeIng(restaurante,ingrediente):
+    restaurante=CambiarEspacios(restaurante)
+    ingrediente=CambiarEspacios(ingrediente)
+    platillos=[]
+    try:
+		for e in prolog.query("platillo("+restaurante.lower()+",Nombre,Tipo,Pais,Receta)"):
+			print ("Platillo a investigar: "+e["Nombre"])
+			ingredientes = div(e["Receta"])
+			print ingredientes
+			for i in ingredientes:
+				print i
+				if i == ingrediente:
+					platillos.append("Platillo: "+e["Nombre"])
+		return platillos
+    except:
+		return platillos
+
+#Funcion que carga la base de conocimientos de un .txt al prolog interno        
+def leertxt():
+    archi=open('BaseConocimientos.txt','r+')
+    linea=archi.readline()
+    while linea!="":
+        prolog.assertz(linea)
+        linea=archi.readline()
+    archi.close()
+
+#Funcion que cambia los espacios por underscores y las comas por "xyz" para su uso en la aplicacion
+def CambiarEspacios(palabra):
+    palabra=palabra.replace(" ","_")
+    palabra=palabra.replace(",","xyz")
+    return palabra
+    
+#Por si no esta creado el archivo de la base de conocimientos, estas dos lineas de codigo lo crean 
+archi=open('BaseConocimientos.txt','a+') 
+archi.close()
+
+#Cargar la base de conocimientos
+leertxt()
+
+#Funcion que escribe en el .txt de la base de conocimientos el hecho de prolog nuevo (al ingresar un restaurante o platillo)
+def grabar(hecho):
+    archi=open('BaseConocimientos.txt','a+')
+    archi.write(hecho+"\n")
+    archi.close()
+
+#----------------------------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------			MAIN				-----------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------------
+
+#main de la aplicacion
+if __name__ == '__main__':
+	#app.debug = True
+	app.run(host='192.168.0.6') #CAMBIAR ESTE IP POR EL ACTUAL
