@@ -315,4 +315,4 @@ def grabar(hecho):
 #main de la aplicacion
 if __name__ == '__main__':
 	#app.debug = True
-	app.run(host='192.168.98.130') #CAMBIAR ESTE IP POR EL ACTUAL
+	app.run(host='192.168.0.6') #CAMBIAR ESTE IP POR EL ACTUAL

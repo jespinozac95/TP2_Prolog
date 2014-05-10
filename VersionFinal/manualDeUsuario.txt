@@ -1,0 +1,43 @@
+Manual de usuario:
+
+Instalar pyswip
+Ejecutar las siguientes lineas de codigo en la terminal:
+
+1- wget http://www.swi-prolog.org/download/stable/src/pl-6.0.2.tar.gz
+2- tar xzvf pl-6.0.2.tar.gz
+3- cd pl-6.0.2/
+4- ./configure --prefix=/usr --enable-shared
+5- make && sudo make install
+6- cd packages/clpqr/
+7- ./configure --prefix=/usr
+8- make && sudo make install
+9- sudo ln -s  /usr/lib/swipl-6.0.2/lib/i686-linux/libswipl.so /usr/lib/libpl.so
+10- sudo ln -s  /usr/lib/swipl-6.0.2/lib/i686-linux/libswipl.so.6.0.2 /usr/lib/.
+11- wget http://pyswip.googlecode.com/files/pyswip-0.2.2.zip
+12- unzip pyswip-0.2.2.zip
+13- cd pyswip-0.2.2/
+14- sudo python setup.py install
+
+Instalar Flask
+Ejecutar las siguientes lineas de codigo en la terminal:
+
+1- sudo apt-get install python-virtualenv
+2- ubicarse en la terminal en la carpeta del programa (via comandos cd) por ejemplo:
+cd TP2_Prolog
+cd VersionFinal
+3- ejecutar la siguiente linea: 
+. venv/bin/activate
+4- ejecutar la siguiente linea: 
+sudo pip install Flask
+
+Ejecutar el programa
+1- Cambiar la ultima linea (318) del archivo app.py:
+	app.run(host='IP actual')
+Ejemplo:
+	app.run(host='192.168.98.130')
+2- Abrir la terminal, ubicarse en la carpeta donde esta el programa:
+Ej:
+cd TP2_Prolog
+cd VersionFinal
+3- . venv/bin/activate
+4- python app.py
